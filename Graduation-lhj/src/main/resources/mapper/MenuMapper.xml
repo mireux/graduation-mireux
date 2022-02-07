@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduationlhj.mapper.MenuMapper">
+
+    <!--    List<String> selectPermsByUserId(Long userId);    -->
+    <select id="selectPermsByUserId" resultType="java.lang.String">
+        select m.permKey
+        from menu as m,
+             (select rm.*
+              from role as r
+                       left join roleMenu as rm on rm.roleId = r.id
+              where r.id = #{userId}) as temp
+        where m.id = temp.menuId
+    </select>
+</mapper>

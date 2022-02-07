@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.graduationlhj.mapper.SeatMapper">
+
+    <!--    void releaseSeat(Long seatId);    -->
+    <update id="releaseSeat">
+        update seat set isChoosed = 0 where id = #{seatId}
+    </update>
+
+    <!--    boolean deleteByNumber(Long roomId, int number);    -->
+    <delete id="deleteByNumber">
+        DELETE
+        from seat
+        where roomId = #{roomId} order by seat desc limit #{number}
+    </delete>
+    <!--     String getSeat(Long seatId);    -->
+    <select id="getSeat" resultType="java.lang.String">
+        select seat
+        from seat
+        where id = #{seatId}
+    </select>
+</mapper>
