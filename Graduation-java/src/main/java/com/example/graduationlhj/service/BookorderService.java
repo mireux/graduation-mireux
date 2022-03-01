@@ -51,4 +51,9 @@ public interface BookorderService extends IService<Bookorder> {
      * @return
      */
     Result cancelOrder(String bookOrderId);
+
+    /**
+     * 根据roomId 和 seatId 获取对应的未结束的订单
+     */
+    Long searchOrder(Long roomId,Long seatId);
 }

@@ -77,8 +77,7 @@ public class BookorderServiceImpl extends ServiceImpl<BookorderMapper, Bookorder
     public int checkOrderByFinish(Long userId) {
         LambdaQueryWrapper<Bookorder> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Bookorder::getAdminId,userId).eq(Bookorder::getIsFinished,false);
-        Integer integer = bookorderMapper.selectCount(lambdaQueryWrapper);
-        return integer;
+        return bookorderMapper.selectCount(lambdaQueryWrapper);
     }
 
     /**
@@ -131,6 +130,17 @@ public class BookorderServiceImpl extends ServiceImpl<BookorderMapper, Bookorder
         bookorderMapper.updateById(bookorder);
         seatMapper.releaseSeat(bookorder.getSeatId());
         return new Result(200,"取消预定成功");
+    }
+
+    /**
+     * 根据roomId 和 seatId 获取对应的订单
+     * @param roomId
+     * @param seatId
+     * @return
+     */
+    @Override
+    public Long searchOrder(Long roomId, Long seatId) {
+        return bookorderMapper.searchOrder(roomId,seatId);
     }
 
     private BookOrderParam copy(Bookorder bookorder) {

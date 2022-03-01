@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class QiniuUtils {
-    public static final String url = "http://r5hf5263q.hd-bkt.clouddn.com/";
+    public static final String url = "http://badwomen.asia/";
 
     public boolean upload(MultipartFile file, String fileName) {
         //构造一个带指定 Region 对象的配置类
@@ -27,7 +27,7 @@ public class QiniuUtils {
         //...生成上传凭证，然后准备上传
         String accessKey = "W5-kAb0NM8UvuPtAGdyj697nN2IJGMvayb08k0Tz";
         String accessSecretKey = "FTHIpdyWGY0g59p3EujdwhxBToG-bdHP1gbo-rnM";
-        String bucket = "graduation-lhj";
+        String bucket = "newblog";
         //默认不指定key的情况下，以文件内容的hash值作为文件名
         try {
             byte[] uploadBytes = file.getBytes();

@@ -13,4 +13,11 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface BookorderMapper extends BaseMapper<Bookorder> {
 
+    /**
+     * 通过roomId 和 seatId 获取对应的订单
+     * @param roomId
+     * @param seatId
+     * @return
+     */
+    Long searchOrder(Long roomId, Long seatId);
 }

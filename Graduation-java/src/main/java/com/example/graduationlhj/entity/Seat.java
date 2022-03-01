@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableField;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -36,6 +38,18 @@ public class Seat implements Serializable {
 
     @TableField("isChoosed")
     private Boolean isChoosed;
+
+    @TableField("createBy")
+    private Long createBy;
+
+    @TableField("createTime")
+    private LocalDateTime createTime;
+
+    @TableField("updateBy")
+    private Long updateBy;
+
+    @TableField("updateTime")
+    private LocalDateTime updateTime;
 
 
 }

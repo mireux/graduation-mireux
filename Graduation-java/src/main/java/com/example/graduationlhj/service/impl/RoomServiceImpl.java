@@ -88,7 +88,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room> implements Ro
         }
         // 这里开启线程池使用异步处理 但是增加了异步处理之后事务失效 暂时好像无法解决
         // 用消息队列可以的确认机制可以解决这个问题 但是我是单系统没必要挂消息队列 所以暂时就这样
-        seatService.createSeat(room.getId(), room.getNumber());
+        seatService.createSeat(room.getId(), room.getNumber(),user);
         return new Result(200, "添加成功");
     }
 

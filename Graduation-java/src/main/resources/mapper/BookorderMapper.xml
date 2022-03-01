@@ -2,4 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.graduationlhj.mapper.BookorderMapper">
 
+    <!--    Long searchOrder(Long roomId, Long seatId);    -->
+    <select id="searchOrder" resultType="java.lang.Long">
+        SELECT id
+        from bookorder
+        WHERE roomId = #{roomId}
+          and seatId = #{seatId}
+        ORDER BY createTime DESC LIMIT 1
+
+    </select>
 </mapper>

@@ -4,7 +4,9 @@
 
     <!--    void releaseSeat(Long seatId);    -->
     <update id="releaseSeat">
-        update seat set isChoosed = 0 where id = #{seatId}
+        update seat
+        set isChoosed = 0
+        where id = #{seatId}
     </update>
 
     <!--    boolean deleteByNumber(Long roomId, int number);    -->
@@ -18,5 +20,12 @@
         select seat
         from seat
         where id = #{seatId}
+    </select>
+    <!--    List<SeatVo> getAllList(String roomId);    -->
+    <select id="getAllList" resultType="com.example.graduationlhj.params.Vo.SeatVo">
+        SELECT r.room as roomName, s.*
+        from seat as s
+                 LEFT JOIN room as r on s.roomId = r.id
+        WHERE roomId = #{roomId}
     </select>
 </mapper>

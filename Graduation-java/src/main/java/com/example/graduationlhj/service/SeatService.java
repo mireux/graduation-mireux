@@ -3,6 +3,7 @@ package com.example.graduationlhj.service;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.entity.Seat;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.example.graduationlhj.entity.User;
 import com.example.graduationlhj.params.RoomInfo;
 import com.example.graduationlhj.params.param.SeatBookParam;
 
@@ -21,7 +22,7 @@ public interface SeatService extends IService<Seat> {
      * @param roomId
      * @param number
      */
-    void createSeat(Long roomId,Integer number);
+    void createSeat(Long roomId, Integer number, User user);
 
     /**
      * 修改座位容量的大小
@@ -48,4 +49,18 @@ public interface SeatService extends IService<Seat> {
      * @param seatId
      */
     void releaseSeat(Long seatId);
+
+    /**
+     * 改变座位状态
+     * @param seatId 座位id
+     * @return
+     */
+    Result changeSeatStatus(Long seatId);
+
+    /**
+     * 解除座位锁定或者锁定座位
+     * @param seatId
+     * @return
+     */
+    Result lockSeat(Long seatId);
 }

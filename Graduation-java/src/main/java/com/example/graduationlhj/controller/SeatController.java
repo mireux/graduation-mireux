@@ -34,4 +34,15 @@ public class SeatController {
         return seatService.bookTheSeat(seatBookParam);
     }
 
+    @PostMapping("/status/change")
+    public Result changeSeatStatus(Long seatId) {
+        return seatService.changeSeatStatus(seatId);
+    }
+
+    @PostMapping("/lock")
+    public Result lockSeat(Long seatId) {
+        System.out.println("seatId = " + seatId);
+        return seatService.lockSeat(seatId);
+    }
+
 }

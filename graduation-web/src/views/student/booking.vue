@@ -17,7 +17,7 @@
           :key="j"
           class="user-radio"
           :label="item.seat"
-          :disabled="item.isChoosed === true"
+          :disabled="(item.isChoosed === true || item.delFlag === true)"
           @click.native.prevent="open(item.isChoosed, item.seat, item.id)"
         />
         <!-- @click.native.prevent="open" -->
@@ -61,7 +61,7 @@
                 time-arrow-control
               />
             </el-col>
-            <el-col class="line" :span="1" style="margin-left: 50px">--</el-col>
+            <el-col class="line" :span="1" style="margin-left: 50px">----</el-col>
             <el-col :span="5">
               <el-time-select
                 v-model="DataForm.endTime"
@@ -213,7 +213,6 @@ export default {
       })
     },
     show() {
-      console.log(this.selectValue)
       //  通过roomId获取对应的教室座位 放入SeatList
       return new Promise((resolve, reject) => {
         getSeatByRoomId(this.selectValue).then(resp => {
@@ -254,7 +253,7 @@ export default {
     },
     TimeFormat(time) {
       // console.log(this.date1 + ' ' + time)
-      var date = this.date1 + ' ' + time + ':00'
+      const date = this.date1 + ' ' + time + ':00'
       return date
     }
   },
@@ -312,6 +311,9 @@ export default {
 }
 
 .selector {
+  margin-top: 50px;
+  margin-left: 20px;
+}.selector {
   margin-top: 50px;
   margin-left: 20px;
 }

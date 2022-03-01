@@ -2,6 +2,9 @@ package com.example.graduationlhj.mapper;
 
 import com.example.graduationlhj.entity.Seat;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.graduationlhj.params.Vo.SeatVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,6 +16,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface SeatMapper extends BaseMapper<Seat> {
 
+    /**
+     * 删除对应数量的座位
+     * @param roomId
+     * @param number
+     * @return
+     */
     boolean deleteByNumber(Long roomId, int number);
 
     /**
@@ -27,4 +36,11 @@ public interface SeatMapper extends BaseMapper<Seat> {
      * @param seatId
      */
     void releaseSeat(Long seatId);
+
+    /**
+     *  获取对应的教室的所有的座位
+     * @param roomId
+     * @return
+     */
+    List<SeatVo> getAllList(String roomId);
 }
