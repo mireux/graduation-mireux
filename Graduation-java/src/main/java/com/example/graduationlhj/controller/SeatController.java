@@ -41,7 +41,6 @@ public class SeatController {
 
     @PostMapping("/lock")
     public Result lockSeat(Long seatId) {
-        System.out.println("seatId = " + seatId);
         return seatService.lockSeat(seatId);
     }
 

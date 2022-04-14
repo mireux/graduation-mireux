@@ -26,6 +26,11 @@
         SELECT r.room as roomName, s.*
         from seat as s
                  LEFT JOIN room as r on s.roomId = r.id
-        WHERE roomId = #{roomId}
+        <where>
+        <if test="_parameter != null">
+            roomId = #{roomId}
+        </if>
+        </where>
     </select>
+
 </mapper>

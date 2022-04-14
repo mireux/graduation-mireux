@@ -4,11 +4,11 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: "jdbc:mysql://localhost:3306/graduation_lhj?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
+    url: "jdbc:mysql://101.34.253.64:3306/graduation_lhj?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai"
     username: root
-    password: lianghaijie
+    password: lhjlhj
   redis:
-    host: 0.0.0.0
+    host: 127.0.0.1
     port: 6379
   mvc:
     pathmatch:
@@ -25,5 +25,5 @@ mybatis-plus:
       id-type: auto
 
 
-ESHost: 127.0.0.1:9200
+#ESHost: 127.0.0.1:9200
 #debug: false

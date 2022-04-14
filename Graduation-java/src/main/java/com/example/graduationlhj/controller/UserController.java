@@ -3,6 +3,7 @@ package com.example.graduationlhj.controller;
 
 import com.example.graduationlhj.common.aop.LogAnnotation;
 import com.example.graduationlhj.common.lang.Result;
+import com.example.graduationlhj.entity.User;
 import com.example.graduationlhj.params.param.LoginParam;
 import com.example.graduationlhj.params.param.UserInfoParam;
 import com.example.graduationlhj.service.UserService;
@@ -71,5 +72,32 @@ public class UserController {
     public Result CancelUpdateAvatar(@RequestHeader String token) {
         return userService.CancelUpdateAvatar(token);
     }
+
+
+    @GetMapping("/getAll")
+    @ApiOperation("获取所有的用户列表")
+    @LogAnnotation(module = "User", operator = "获取所有的用户")
+    public Result getAllUser() {
+        return userService.getAllUser();
+    }
+
+    @PostMapping("/insert")
+    @ApiOperation("添加用户")
+    public Result InsertUser(@RequestBody User user) {
+        return userService.InsertUser(user);
+    }
+
+    @PostMapping("/status/change")
+    @ApiOperation("修改用户状态")
+    public Result changeTheStatus(Long id,String status) {
+        return userService.changeTheStatus(id,status);
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation("删除用户")
+    public Result deleteUser(Long id) {
+        return userService.deleteUser(id);
+    }
+
 
 }

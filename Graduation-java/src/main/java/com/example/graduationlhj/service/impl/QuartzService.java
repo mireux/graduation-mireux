@@ -4,6 +4,7 @@ import com.example.graduationlhj.params.param.SeatBookParam;
 import com.example.graduationlhj.quartz.countDownJob;
 import org.quartz.*;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,4 +44,19 @@ public class QuartzService {
         }
     }
 
+    // 开启定时任务 每周一定时清除
+    public void clearData() {
+        // 创建触发器
+        String clearCron = "0 0 0 ? * MON";
+        CronTrigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("clearData", "clear")
+                .withSchedule(CronScheduleBuilder.cronSchedule(clearCron))
+                .build();
+        try {
+            scheduler.scheduleJob(null, trigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+            System.out.println("定时器设置失败");
+        }
+    }
 }

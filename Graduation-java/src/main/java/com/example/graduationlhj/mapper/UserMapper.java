@@ -3,6 +3,9 @@ package com.example.graduationlhj.mapper;
 import com.example.graduationlhj.entity.Role;
 import com.example.graduationlhj.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.graduationlhj.params.Vo.UserVo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -34,5 +37,11 @@ public interface UserMapper extends BaseMapper<User> {
      * @return
      */
     String getUserNameById(Long userId);
+
+    /**
+     * 获取所有的用户
+     * @return
+     */
+    List<UserVo> getAllUser();
 
 }

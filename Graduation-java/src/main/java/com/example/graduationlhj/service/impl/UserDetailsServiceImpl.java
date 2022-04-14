@@ -1,6 +1,7 @@
 package com.example.graduationlhj.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.mapper.MenuMapper;
 import com.example.graduationlhj.params.LoginUser;
 import com.example.graduationlhj.entity.User;
@@ -34,14 +35,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         // 根据用户名查找id
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getUserName,username);
+        lambdaQueryWrapper.eq(User::getDelFlag,0);
         User user = userMapper.selectOne(lambdaQueryWrapper);
         if(Objects.isNull(user)) {
             throw new RuntimeException("登录失败");
         }
-        /**
-         *    根据用户查询权限信息 添加到LoginUser中
-         *    一个是List<String> permKey 表示该权限可以访问的接口
-         *    主要是后端鉴权使用的
+        /*
+             根据用户查询权限信息 添加到LoginUser中
+             一个是List<String> permKey 表示该权限可以访问的接口
+             主要是后端鉴权使用的
          */
         List<String> permission = menuMapper.selectPermsByUserId(user.getRoleId());
         // 封装成UserDetails返回

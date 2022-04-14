@@ -1,11 +1,13 @@
 package com.example.graduationlhj.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.entity.Role;
 import com.example.graduationlhj.entity.User;
 import com.example.graduationlhj.mapper.UserMapper;
 import com.example.graduationlhj.params.LoginUser;
 import com.example.graduationlhj.params.Vo.UserInfoVo;
+import com.example.graduationlhj.params.Vo.UserVo;
 import com.example.graduationlhj.params.param.LoginParam;
 import com.example.graduationlhj.params.param.UserInfoParam;
 import com.example.graduationlhj.service.UserService;
@@ -20,14 +22,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final UserMapper userMapper;
 
     private final QiniuUtils qiniuUtils;
+
 
     @Autowired
     public UserServiceImpl(AuthenticationManager authenticationManager, RedisCache redisCache, UserMapper userMapper, QiniuUtils qiniuUtils) {
@@ -79,7 +88,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 调用自定义的登录接口 调用ProviderManager的方法进行认证 如果认证通过生成jwt
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginParam.getUsername(), loginParam.getPassword());
-        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+        Authentication authenticate = null;
+        try {
+            authenticate = authenticationManager.authenticate(authenticationToken);
+        } catch (LockedException e) {
+            return new Result(500, "账号已停用");
+        } catch (InternalAuthenticationServiceException e) {
+            return new Result(500,"登录失败");
+        }
         if (Objects.isNull(authenticate)) {
             throw new RuntimeException("用户名或者密码错误");
         }
@@ -108,7 +124,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Role role = userMapper.getRoleByUserId(user.getId());
         // 把需要的内容复制到UserInfoVo之中传给前端
         UserInfoVo userInfoVo = copyToVo(user, role);
-        return new Result(200, "",userInfoVo);
+        return new Result(200, "", userInfoVo);
     }
 
     /**
@@ -116,7 +132,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * 1. 从token中获取我们的用户Id从而在redis中找到我们原先存放的数据
      * 2. 往数据库中进行更新操作
      * 3. 更新完毕后需要更新我们在redis中的缓存数据
-     * TODO 好像redis和数据库之间会有数据不一致的情况 记得检查！！
+     * TODO redis和数据库之间会有数据不一致的情况
      */
     @Override
     @Transactional
@@ -137,7 +153,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }
             loginUser.setUser(user);
             // 5. 将新的数据写入redis数据库中
-            redisCache.setCacheObject("login:" + userId, loginUser,1,TimeUnit.DAYS);
+            redisCache.setCacheObject("login:" + userId, loginUser, 1, TimeUnit.DAYS);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,10 +178,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setAvatar(ImageUrl);
             System.out.println(user);
             if (userMapper.updateById(user) < 0) {
-                return new Result(4001,"更新头像失败");
+                return new Result(4001, "更新头像失败");
             }
             loginUser.setUser(user);
-            redisCache.setCacheObject("login:" + userId, loginUser,1,TimeUnit.DAYS);
+            redisCache.setCacheObject("login:" + userId, loginUser, 1, TimeUnit.DAYS);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -189,12 +205,98 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 从redis中获取数据
         String ImageUrl = redisCache.getCacheObject("Avatar:" + userId);
         // 删除图库中的头像
-       if(!StringUtils.isBlank(ImageUrl)) {
-           qiniuUtils.deleteOnQn(ImageUrl);
-           // 删除redis的缓存
-           redisCache.deleteObject("Avatar:" + userId);
-       }
-        return new Result(200,"");
+        if (!StringUtils.isBlank(ImageUrl)) {
+            qiniuUtils.deleteOnQn(ImageUrl);
+            // 删除redis的缓存
+            redisCache.deleteObject("Avatar:" + userId);
+        }
+        return new Result(200, "");
+    }
+
+    @Override
+    public Result getAllUser() {
+        List<UserVo> userVoList = userMapper.getAllUser();
+        if (userVoList == null || userVoList.isEmpty()) {
+            return new Result(500, "获取学生列表失败");
+        }
+        return new Result(200, "", userVoList);
+    }
+
+
+    /**
+     * 添加用户
+     * @param user 用户信息
+     * @return
+     */
+    @Override
+    public Result InsertUser(User user) {
+        // 获取当前管理员信息
+        User userInfo = UserUtils.getUserInfo();
+        // 头像默认
+        user.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+        user.setCreateBy(userInfo.getId());
+        user.setUpdateBy(userInfo.getId());
+        user.setCreateTime(LocalDateTime.now());
+        user.setUpdateTime(LocalDateTime.now());
+        user.setStatus("0");
+        user.setDelFlag(0);
+        user.setRoleId(2L);
+        user.setUserType("0");
+        // 加密密码
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        if (userMapper.insert(user) < 0) {
+            return new Result(500, "添加失败");
+        }
+        // 添加个人学习报告
+        return new Result(200, "添加成功");
+    }
+
+    /**
+     * 改变用户状态
+     *
+     * @param id     用户id
+     * @param status 用户状态
+     * @return
+     */
+    @Override
+    public Result changeTheStatus(Long id, String status) {
+        // 获取当前管理员信息
+        User userInfo = UserUtils.getUserInfo();
+        // 根据Id寻找到对应的用户
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getId, id);
+        User user = userMapper.selectOne(lambdaQueryWrapper);
+        user.setStatus(status);
+        user.setUpdateBy(userInfo.getId());
+        user.setUpdateTime(LocalDateTime.now());
+        if (userMapper.updateById(user) < 0) {
+            return new Result(500, "修改状态失败");
+        }
+        return new Result(200, "修改状态成功");
+    }
+
+    /**
+     * 删除用户
+     *
+     * @param id 用户id
+     * @return
+     */
+    @Override
+    public Result deleteUser(Long id) {
+        // 获取当前管理员信息
+        User userInfo = UserUtils.getUserInfo();
+        // 根据Id寻找到对应的用户
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getId, id);
+        User user = userMapper.selectOne(lambdaQueryWrapper);
+        user.setDelFlag(1);
+        user.setUpdateBy(userInfo.getId());
+        user.setUpdateTime(LocalDateTime.now());
+        if (userMapper.updateById(user) < 0) {
+            return new Result(500, "删除失败");
+        }
+        return new Result(200, "删除成功");
     }
 
 

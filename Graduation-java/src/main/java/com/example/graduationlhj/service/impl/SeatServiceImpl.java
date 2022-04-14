@@ -13,6 +13,7 @@ import com.example.graduationlhj.params.param.SeatBookParam;
 import com.example.graduationlhj.service.BookorderService;
 import com.example.graduationlhj.service.SeatService;
 import com.example.graduationlhj.utils.UserUtils;
+import lombok.Synchronized;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,6 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat> implements Se
     private final BookorderService bookorderService;
 
     private final UserMapper userMapper;
-
 
 
     public SeatServiceImpl(SeatMapper seatMapper, BookorderService bookorderService, UserMapper userMapper) {
@@ -123,7 +123,7 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat> implements Se
      * @return
      */
     @Override
-    public Result bookTheSeat(SeatBookParam seatBookParam) {
+    public synchronized Result bookTheSeat(SeatBookParam seatBookParam) {
         // 1. 检查是否有未完成的订单 有则无法继续预定
         User user = UserUtils.getUserInfo();
         if (bookorderService.checkOrderByFinish(user.getId()) > 0) {

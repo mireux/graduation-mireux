@@ -16,6 +16,36 @@
         from user
         where id = #{userId}
     </select>
+    <!--    List<UserVo> getAllUser();    -->
+    <select id="getAllUser" resultType="com.example.graduationlhj.params.Vo.UserVo">
+        select
+            temp.id,
+            temp.userName,
+            temp.nickName,
+            temp.sex,
+            temp.createBy ,
+            temp.createTime ,
+            `user`.userName as updateBy,
+            temp.updateTime,
+            temp.`status`,
+            `user`.delFlag
+        from `user`,
+             (SELECT
+                  u.id,
+                  u.roleId,
+                  u.userName,
+                  u.nickName,
+                  u.sex,
+                  cUser.userName as createBy ,
+                  u.createTime ,
+                  u.updateBy,
+                  u.updateTime,
+                  u.`status`,
+                  u.delFlag
+              FROM `user` as u
+                       INNER JOIN `user` as cUser on  u.createBy = cUser.id) as temp
+        where temp.updateBy = `user`.id and temp.roleId = 2 and temp.delFlag = 0
+    </select>
 
     <!--    int updateAvatarByUserId(String imageUrl,Long id);   -->
     <update id="updateAvatarByUserId">

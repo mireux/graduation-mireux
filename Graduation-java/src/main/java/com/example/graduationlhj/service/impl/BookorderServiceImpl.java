@@ -126,7 +126,6 @@ public class BookorderServiceImpl extends ServiceImpl<BookorderMapper, Bookorder
         lambdaQueryWrapper.eq(Bookorder::getId,id);
         Bookorder bookorder = bookorderMapper.selectOne(lambdaQueryWrapper);
         bookorder.setIsFinished(3);
-        // 没有失败判断 偷懒了
         bookorderMapper.updateById(bookorder);
         seatMapper.releaseSeat(bookorder.getSeatId());
         return new Result(200,"取消预定成功");

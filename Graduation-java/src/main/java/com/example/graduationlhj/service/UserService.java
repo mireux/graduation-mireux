@@ -46,4 +46,31 @@ public interface UserService extends IService<User> {
      * 取消上传头像
      */
     Result CancelUpdateAvatar(String token);
+
+    /**
+     * 获取所有的用户列表
+     */
+    Result getAllUser();
+
+    /**
+     * 添加用户
+     * @param user 用户信息
+     * @return
+     */
+    Result InsertUser(User user);
+
+    /**
+     * 改变用户状态
+     * @param id 用户id
+     * @param status 用户状态
+     * @return
+     */
+    Result changeTheStatus(Long id, String status);
+
+    /**
+     * 删除用户
+     * @param id 用户id
+     * @return
+     */
+    Result deleteUser(Long id);
 }

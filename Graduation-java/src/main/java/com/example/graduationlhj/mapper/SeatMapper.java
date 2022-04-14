@@ -2,6 +2,7 @@ package com.example.graduationlhj.mapper;
 
 import com.example.graduationlhj.entity.Seat;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.graduationlhj.params.Vo.AdminInfoVo;
 import com.example.graduationlhj.params.Vo.SeatVo;
 
 import java.util.List;
@@ -43,4 +44,5 @@ public interface SeatMapper extends BaseMapper<Seat> {
      * @return
      */
     List<SeatVo> getAllList(String roomId);
+
 }

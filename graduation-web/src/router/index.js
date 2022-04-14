@@ -90,25 +90,25 @@ export const asyncRoutes = [
     ]
   },
   // 学习报告 权限：student
-  {
-    path: '/student/2',
-    component: Layout,
-    redirect: '/student/studyReport',
-    meta: {
-      roles: ['Student']
-    },
-    children: [
-      {
-        path: '/student/studyReport',
-        component: () => import('@/views/student/studyReport'),
-        name: 'studyReport',
-        meta: {
-          title: '学习报告',
-          icon: 'dashboard'
-        }
-      }
-    ]
-  },
+  // {
+  //   path: '/student/2',
+  //   component: Layout,
+  //   redirect: '/student/studyReport',
+  //   meta: {
+  //     roles: ['Student']
+  //   },
+  //   children: [
+  //     {
+  //       path: '/student/studyReport',
+  //       component: () => import('@/views/student/studyReport'),
+  //       name: 'studyReport',
+  //       meta: {
+  //         title: '学习报告',
+  //         icon: 'dashboard'
+  //       }
+  //     }
+  //   ]
+  // },
   // 注意事项 路由：/student/warning 权限：student
   {
     path: '/student/3',
@@ -165,9 +165,47 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/admin/3',
+    component: Layout,
+    redirect: '/admin/manageUser',
+    meta: {
+      roles: ['Admin']
+    },
+    children: [
+      {
+        path: '/admin/manageUser',
+        component: () => import('@/views/admin/manageUser'),
+        meta: {
+          title: '用户管理',
+          icon: 'user'
+        }
+      }
+    ]
+  },
+  // 统计显示
+  {
+    path: '/admin/4',
+    component: Layout,
+    redirect: '/admin/showInfo',
+    meta: {
+      roles: ['Admin']
+    },
+    children: [
+      {
+        path: '/admin/showInfo',
+        component: () => import('@/views/admin/showInfo'),
+        name: 'adminShowInfo',
+        meta: {
+          title: '统计',
+          icon: 'user'
+        }
+      }
+    ]
+  },
   // 个人中心 权限：student Admin
   {
-    path: '/student/4',
+    path: '/student/5',
     component: Layout,
     redirect: '/student/personal',
     meta: {
