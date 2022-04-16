@@ -9,6 +9,7 @@ import com.example.graduationlhj.params.LoginUser;
 import com.example.graduationlhj.params.Vo.UserInfoVo;
 import com.example.graduationlhj.params.Vo.UserVo;
 import com.example.graduationlhj.params.param.LoginParam;
+import com.example.graduationlhj.params.param.PasswordParam;
 import com.example.graduationlhj.params.param.UserInfoParam;
 import com.example.graduationlhj.service.UserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,10 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -95,10 +93,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return new Result(500, "账号已停用");
         } catch (InternalAuthenticationServiceException e) {
             return new Result(500,"登录失败");
+        } catch (BadCredentialsException e) {
+            return new Result(500,"用户名或者密码错误");
         }
-        if (Objects.isNull(authenticate)) {
-            throw new RuntimeException("用户名或者密码错误");
-        }
+
         LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
         // 获取用户ID去生成一个token
         String userId = loginUser.getUser().getId().toString();
@@ -297,6 +295,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return new Result(500, "删除失败");
         }
         return new Result(200, "删除成功");
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param passwordParam
+     * @return
+     */
+    @Override
+    public Result changePass(PasswordParam passwordParam) {
+        /**
+         * 1. 先比对旧密码是否相同
+         * 2. 比对新密码和重复密码是否相同（前端虽然有验证 后端为了保险再验证一遍）
+         * 3. 比对新密码和旧密码是否相同
+         * 3. 将新密码写入数据库
+         * 4. 删除redis中的缓存 相当于需要重新登录
+         */
+        User user = UserUtils.getUserInfo();
+        String password = user.getPassword();
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        if (!bCryptPasswordEncoder.matches(passwordParam.getOldPass(), password)) {
+            return new Result(50003, "旧密码错误");
+        }
+        else if (!passwordParam.getNewPass().equals(passwordParam.getCheckPass())) {
+            return new Result(50003, "两次输入密码不一致");
+        }
+        else if(passwordParam.getOldPass().equals(passwordParam.getNewPass())) {
+            return new Result(50003,"新旧密码一致，请重试");
+        }
+        String encode = bCryptPasswordEncoder.encode(passwordParam.getNewPass());
+        //更新进数据库
+        user.setPassword(encode);
+        if (userMapper.updateById(user) < 0) {
+            return new Result(50002,"更新失败");
+        }
+        // 删除redis中的缓存
+        redisCache.deleteObject("login:"+user.getId());
+        return new Result(200,"更新成功");
     }
 
 

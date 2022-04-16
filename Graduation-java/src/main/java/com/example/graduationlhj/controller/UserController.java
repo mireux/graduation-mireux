@@ -5,6 +5,7 @@ import com.example.graduationlhj.common.aop.LogAnnotation;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.entity.User;
 import com.example.graduationlhj.params.param.LoginParam;
+import com.example.graduationlhj.params.param.PasswordParam;
 import com.example.graduationlhj.params.param.UserInfoParam;
 import com.example.graduationlhj.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -97,6 +98,12 @@ public class UserController {
     @ApiOperation("删除用户")
     public Result deleteUser(Long id) {
         return userService.deleteUser(id);
+    }
+
+    @PostMapping("/changePass")
+    @ApiOperation("修改密码")
+    public Result changeThePassword(@RequestBody PasswordParam passwordParam) {
+        return userService.changePass(passwordParam);
     }
 
 

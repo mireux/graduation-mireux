@@ -4,6 +4,7 @@ import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.graduationlhj.params.param.LoginParam;
+import com.example.graduationlhj.params.param.PasswordParam;
 import com.example.graduationlhj.params.param.UserInfoParam;
 
 /**
@@ -73,4 +74,11 @@ public interface UserService extends IService<User> {
      * @return
      */
     Result deleteUser(Long id);
+
+    /**
+     * 修改密码
+     * @param passwordParam 前端回传的数据
+     * @return
+     */
+    Result changePass(PasswordParam passwordParam);
 }
