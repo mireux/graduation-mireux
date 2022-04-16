@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <el-button style="margin-bottom: 20px" type="primary" icon="el-icon-plus" @click="openDialog">添加</el-button>
-    <el-dialog title="添加自习室" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
+    <el-button icon="el-icon-plus" style="margin-bottom: 20px" type="primary" @click="openDialog">添加</el-button>
+    <el-dialog :close-on-click-modal="false" :visible.sync="dialogFormVisible" title="添加自习室">
       <el-form :model="newRoomList">
-        <el-form-item label="自习室名称" :label-width="formLabelWidth">
+        <el-form-item :label-width="formLabelWidth" label="自习室名称">
           <el-input v-model="newRoomList.name" autocomplete="off" style="width: 300px"></el-input>
         </el-form-item>
       </el-form>
@@ -11,10 +11,10 @@
         <span class="demonstration">容纳人数：</span>
         <el-slider
           v-model="newRoomList.capacity"
-          show-input
-          :show-input-controls="false"
           :max="50"
+          :show-input-controls="false"
           input-size="mini"
+          show-input
         >
 
         </el-slider>
@@ -28,71 +28,75 @@
     <el-table
       v-loading="listLoading"
       :data="roomList"
-      element-loading-text="Loading"
       border
+      element-loading-text="Loading"
       fit
-      size="mini"
       highlight-current-row
+      size="mini"
     >
       <el-table-column align="center" label="编号" width="110">
         <template slot-scope="scope">
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="教室" align="center">
+      <el-table-column align="center" label="教室">
         <template slot-scope="scope">
           {{ scope.row.room }}
         </template>
       </el-table-column>
-      <el-table-column label="容纳人数" align="center" width="100">
+      <el-table-column align="center" label="容纳人数" width="100">
         <template slot-scope="scope">
           {{ scope.row.number }}
         </template>
       </el-table-column>
-      <el-table-column label="创建人" width="180" align="center">
+      <el-table-column align="center" label="创建人" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createBy }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="180" align="center">
+      <el-table-column align="center" label="创建时间" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新人" width="180" align="center">
+      <el-table-column align="center" label="更新人" width="180">
         <template slot-scope="scope">
           {{ scope.row.updateBy }}
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="180" align="center">
+      <el-table-column align="center" label="更新时间" width="180">
         <template slot-scope="scope">
           {{ scope.row.updateTime }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="状态" width="120" align="center"
-                       :filters="[{ text: '启用', value: false }, { text: '停用', value: true }]"
-                       :filter-method="filterTag"
+      <el-table-column :filter-method="filterTag" :filters="[{ text: '启用', value: false }, { text: '停用', value: true }]" align="center" class-name="status-col"
                        filter-placement="bottom-end"
+                       label="状态"
+                       width="120"
       >
         <template slot-scope="scope">
-          <el-tag type="success" v-if="!scope.row.delFlag">启用</el-tag>
-          <el-tag type="danger" v-if="scope.row.delFlag">停用</el-tag>
+          <el-tag v-if="!scope.row.delFlag" type="success">启用</el-tag>
+          <el-tag v-if="scope.row.delFlag" type="danger">停用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作" width="300">
+      <el-table-column align="center" label="操作" prop="created_at" width="300">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" icon="el-icon-edit" @click="showTheEdit(scope.row)">修改</el-button>
-          <el-button size="small" type="danger" icon="el-icon-delete" @click="disabledTheRoom(scope.row.id)" v-if="!scope.row.delFlag">停用
+          <el-button icon="el-icon-edit" size="small" type="primary" @click="showTheEdit(scope.row)">修改</el-button>
+          <el-button v-if="!scope.row.delFlag" icon="el-icon-delete" size="small" type="danger"
+                     @click="disabledTheRoom(scope.row.id)"
+          >停用
           </el-button>
-          <el-button size="small" type="success" icon="el-icon-setting" @click="disabledTheRoom(scope.row.id)" v-if="scope.row.delFlag">启用
+          <el-button v-if="scope.row.delFlag" icon="el-icon-setting" size="small" type="success"
+                     @click="disabledTheRoom(scope.row.id)"
+          >启用
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <el-dialog title="修改自习室" :visible.sync="dialogEditFormVisible" :close-on-click-modal="false">
+    <el-dialog :close-on-click-modal="false" :visible.sync="dialogEditFormVisible" title="修改自习室">
       <el-form :model="editRoomList">
-        <el-form-item label="自习室名称" :label-width="formLabelWidth">
+        <el-form-item :label-width="formLabelWidth" label="自习室名称">
           <el-input v-model="editRoomList.name" autocomplete="off" style="width: 300px"></el-input>
         </el-form-item>
       </el-form>
@@ -100,10 +104,10 @@
         <span class="demonstration">容纳人数：</span>
         <el-slider
           v-model="editRoomList.capacity"
-          show-input
-          :show-input-controls="false"
           :max="50"
+          :show-input-controls="false"
           input-size="mini"
+          show-input
         >
 
         </el-slider>
@@ -149,7 +153,7 @@ export default {
 
   methods: {
     filterTag(value, row) {
-      return row.delFlag === value;
+      return row.delFlag === value
     },
     showTheEdit(row) {
       this.dialogEditFormVisible = true

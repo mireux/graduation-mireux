@@ -9,7 +9,7 @@ export function getOrderByUser() {
 
 export function cancelOrder(param) {
   return Request({
-    url: '/order/cancel?bookOrderId='+param,
+    url: '/order/cancel?bookOrderId=' + param,
     method: 'post'
   })
 }

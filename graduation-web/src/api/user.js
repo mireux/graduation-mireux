@@ -44,49 +44,49 @@ export function CancelUpdateAvatar() {
   })
 }
 
-
 export function changePassword(data) {
-    return request({
-      url: '/user/changePass',
-      method: 'post',
-      data
-    })
-  }
+  return request({
+    url: '/user/changePass',
+    method: 'post',
+    data
+  })
+}
+
 export function updateUserInfo(data) {
-    return request({
-      url: '/user/info/update',
-      method: 'post',
-      data
-    })
-  }
+  return request({
+    url: '/user/info/update',
+    method: 'post',
+    data
+  })
+}
 
 export function getAllUser() {
-    return request({
-      url: '/user/getAll',
-      method: 'get'
-    })
-  }
+  return request({
+    url: '/user/getAll',
+    method: 'get'
+  })
+}
 
 export function changeTheStatus(id, status) {
-    return request({
-      url: '/user/status/change?id=' + id + '&status=' + status,
-      method: 'post'
-    })
-  }
+  return request({
+    url: '/user/status/change?id=' + id + '&status=' + status,
+    method: 'post'
+  })
+}
 
 export function deleteUserById(id) {
-    return request({
-      url: '/user/delete?id=' + id,
-      method: 'post'
-    })
-  }
+  return request({
+    url: '/user/delete?id=' + id,
+    method: 'post'
+  })
+}
 
 export function insertUser(data) {
-    return request({
-      url: '/user/insert',
-      method: 'post',
-      data
-    })
-  }
+  return request({
+    url: '/user/insert',
+    method: 'post',
+    data
+  })
+}
 
 

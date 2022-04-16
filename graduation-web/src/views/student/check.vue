@@ -3,11 +3,11 @@
     <el-table
       v-loading="listLoading"
       :data="bookOrderList"
-      element-loading-text="Loading"
       border
+      element-loading-text="Loading"
       fit
-      size="mini"
       highlight-current-ro
+      size="mini"
       style="margin-top: 50px"
     >
       <el-table-column align="center" label="编号" width="110">
@@ -15,42 +15,45 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="教室" align="center">
+      <el-table-column align="center" label="教室">
         <template slot-scope="scope">
           {{ scope.row.room }}
         </template>
       </el-table-column>
-      <el-table-column label="座位" align="center" width="100">
+      <el-table-column align="center" label="座位" width="100">
         <template slot-scope="scope">
           {{ scope.row.seat }}
         </template>
       </el-table-column>
-      <el-table-column label="预定时间" width="180" align="center">
+      <el-table-column align="center" label="预定时间" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="开始时间" width="180" align="center">
+      <el-table-column align="center" label="开始时间" width="180">
         <template slot-scope="scope">
           {{ scope.row.bookStartTime }}
         </template>
       </el-table-column>
-      <el-table-column label="结束时间" width="180" align="center">
+      <el-table-column align="center" label="结束时间" width="180">
         <template slot-scope="scope">
           {{ scope.row.bookEndTime }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="状态" width="120" align="center">
+      <el-table-column align="center" class-name="status-col" label="状态" width="120">
         <template slot-scope="scope">
-          <el-tag type="success" v-if="scope.row.isFinished === 1">已完成</el-tag>
-          <el-tag type="danger" v-if="scope.row.isFinished === 0">未完成</el-tag>
-          <el-tag type="info" v-if="scope.row.isFinished === 3">已取消</el-tag>
+          <el-tag v-if="scope.row.isFinished === 1" type="success">已完成</el-tag>
+          <el-tag v-if="scope.row.isFinished === 0" type="danger">未完成</el-tag>
+          <el-tag v-if="scope.row.isFinished === 3" type="info">已取消</el-tag>
 
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作" width="300">
+      <el-table-column align="center" label="操作" prop="created_at" width="300">
         <template slot-scope="scope">
-          <el-button size="small" type="primary" icon="el-icon-edit" @click="showTheEdit(scope.row)" v-if="scope.row.isFinished === 0">取消预订</el-button>
+          <el-button v-if="scope.row.isFinished === 0" icon="el-icon-edit" size="small" type="primary"
+                     @click="showTheEdit(scope.row)"
+          >取消预订
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

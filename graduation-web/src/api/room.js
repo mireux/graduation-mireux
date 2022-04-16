@@ -2,7 +2,7 @@ import Request from '@/utils/request'
 
 export function getRoomList(param) {
   return Request({
-      url: '/room/getAll?isScreen='+param,
+      url: '/room/getAll?isScreen=' + param,
       method: 'get'
     }
   )
@@ -18,14 +18,14 @@ export function InsertRoom(data) {
 
 export function disabledTheRoom(param) {
   return Request({
-    url: '/room/disabled?id='+param,
-    method: 'post',
+    url: '/room/disabled?id=' + param,
+    method: 'post'
   })
 }
 
-export function EditTheRoom(id,data) {
+export function EditTheRoom(id, data) {
   return Request({
-    url: '/room/edit?id='+id,
+    url: '/room/edit?id=' + id,
     method: 'post',
     data
   })

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-select v-model="selectValue" placeholder="请选择" class="selector" @change="show()">
+    <el-select v-model="selectValue" class="selector" placeholder="请选择" @change="show()">
       <el-option
         v-for="item in roomList"
         :key="item.id"
@@ -10,24 +10,24 @@
       </el-option>
     </el-select>
 
-      <el-radio-group v-model="radio1">
-<!--        <transition name="el-fade-in-linear">-->
-        <el-radio-button
-          v-for="(item, j) in SeatList"
-          :key="j"
-          class="user-radio"
-          :label="item.seat"
-          :disabled="(item.isChoosed === true || item.delFlag === true)"
-          @click.native.prevent="open(item.isChoosed, item.seat, item.id)"
-        />
-        <!-- @click.native.prevent="open" -->
-<!--        </transition>-->
-      </el-radio-group>
+    <el-radio-group v-model="radio1">
+      <!--        <transition name="el-fade-in-linear">-->
+      <el-radio-button
+        v-for="(item, j) in SeatList"
+        :key="j"
+        :disabled="(item.isChoosed === true || item.delFlag === true)"
+        :label="item.seat"
+        class="user-radio"
+        @click.native.prevent="open(item.isChoosed, item.seat, item.id)"
+      />
+      <!-- @click.native.prevent="open" -->
+      <!--        </transition>-->
+    </el-radio-group>
 
     <el-dialog
-      title="预约时间"
-      :visible.sync="dialogFormVisible"
       :close-on-click-modal="false"
+      :visible.sync="dialogFormVisible"
+      title="预约时间"
     >
       <el-form :model="form">
         <el-row>
@@ -36,12 +36,12 @@
               <!-- readonly -->
               <el-date-picker
                 v-model="date1"
-                type="date"
+                :picker-options="pickerOptions"
+                format="yyyy 年 MM 月 dd 日"
                 placeholder="选择日期"
                 style="width: 100%"
-                format="yyyy 年 MM 月 dd 日"
+                type="date"
                 value-format="yyyy-MM-dd"
-                :picker-options="pickerOptions"
                 @change="getNowTime()"
               />
             </el-col>
@@ -52,26 +52,26 @@
             <el-col :span="5">
               <el-time-select
                 v-model="DataForm.startTime"
-                placeholder="起始时间"
                 :picker-options="{
                   start: nowTime,
                   step: '00:05',
                   end: '22:30',
                 }"
+                placeholder="起始时间"
                 time-arrow-control
               />
             </el-col>
-            <el-col class="line" :span="1" style="margin-left: 50px">----</el-col>
+            <el-col :span="1" class="line" style="margin-left: 50px">----</el-col>
             <el-col :span="5">
               <el-time-select
                 v-model="DataForm.endTime"
-                placeholder="结束时间"
                 :picker-options="{
                   start: nowTime,
                   step: '00:05',
                   end: '22:30',
                   minTime: DataForm.startTime,
                 }"
+                placeholder="结束时间"
                 time-arrow-control
               />
             </el-col>
@@ -205,7 +205,7 @@ export default {
           resolve(resp)
           setInterval(() => {
             this.isActive = false
-          },1000)
+          }, 1000)
           resolve(resp)
         }).catch(error => {
           reject(error)
@@ -313,7 +313,9 @@ export default {
 .selector {
   margin-top: 50px;
   margin-left: 20px;
-}.selector {
+}
+
+.selector {
   margin-top: 50px;
   margin-left: 20px;
 }

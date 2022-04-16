@@ -3,42 +3,42 @@
     <el-form
       ref="loginForm"
       :model="loginForm"
-      class="login-form"
       auto-complete="on"
+      class="login-form"
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">后台登录</h3>
+        <h3 class="title">图书馆自习室座位预约系统登录</h3>
       </div>
 
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon icon-class="user"/>
         </span>
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
-          type="text"
-          tabindex="1"
           auto-complete="off"
+          name="username"
+          placeholder="Username"
+          tabindex="1"
+          type="text"
         />
       </el-form-item>
 
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon icon-class="password"/>
         </span>
         <el-input
           :key="passwordType"
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
-          name="password"
-          tabindex="2"
           auto-complete="off"
+          name="password"
+          placeholder="Password"
+          tabindex="2"
           @keyup.enter.native="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
@@ -50,16 +50,16 @@
 
       <el-form-item prop="code" style="width: 250px">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon icon-class="password"/>
         </span>
         <el-input
           ref="code"
           v-model="loginForm.code"
-          placeholder="code"
-          name="code"
-          type="text"
-          tabindex="3"
           auto-complete="off"
+          name="code"
+          placeholder="code"
+          tabindex="3"
+          type="text"
         />
       </el-form-item>
       <div class="image">
@@ -72,10 +72,11 @@
       </div>
       <el-button
         :loading="loading"
-        type="primary"
         style="width: 100%"
+        type="primary"
         @click.native.prevent="handleLogin"
-      >登录</el-button>
+      >登录
+      </el-button>
     </el-form>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <template>
   <div class="manageSeat">
-    <el-select v-model="selectValue" placeholder="请选择" class="selector" @change="show()">
+    <el-select v-model="selectValue" class="selector" placeholder="请选择" @change="show()">
       <el-option
         v-for="item in roomList"
         :key="item.id"
@@ -12,12 +12,12 @@
     <el-table
       v-loading="listLoading"
       :data="seatList"
-      element-loading-text="Loading"
       border
+      element-loading-text="Loading"
       fit
+      highlight-current-row
       max-height="550px"
       size="mini"
-      highlight-current-row
       style="margin-top: 20px"
     >
       <el-table-column align="center" label="编号" width="110">
@@ -25,66 +25,66 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="座位号" align="center">
+      <el-table-column align="center" label="座位号">
         <template slot-scope="scope">
           {{ scope.row.seat }}
         </template>
       </el-table-column>
-      <el-table-column label="教室" align="center" width="100">
+      <el-table-column align="center" label="教室" width="100">
         <template slot-scope="scope">
           {{ scope.row.roomName }}
         </template>
       </el-table-column>
-      <el-table-column label="创建人" width="180" align="center">
+      <el-table-column align="center" label="创建人" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createBy }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" width="180" align="center">
+      <el-table-column align="center" label="创建时间" width="180">
         <template slot-scope="scope">
           <span>{{ scope.row.createTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="更新人" width="180" align="center">
+      <el-table-column align="center" label="更新人" width="180">
         <template slot-scope="scope">
           {{ scope.row.updateBy }}
         </template>
       </el-table-column>
-      <el-table-column label="更新时间" width="180" align="center">
+      <el-table-column align="center" label="更新时间" width="180">
         <template slot-scope="scope">
           {{ scope.row.updateTime }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="是否被选择" width="120" align="center"
+      <el-table-column align="center" class-name="status-col" label="是否被选择" width="120"
       >
         <template slot-scope="scope">
-          <el-tag type="success" v-if="!scope.row.isChoosed">未占用</el-tag>
-          <el-tag type="danger" v-if="scope.row.isChoosed">已占用</el-tag>
+          <el-tag v-if="!scope.row.isChoosed" type="success">未占用</el-tag>
+          <el-tag v-if="scope.row.isChoosed" type="danger">已占用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="座位状态" width="120" align="center"
+      <el-table-column align="center" class-name="status-col" label="座位状态" width="120"
       >
         <template slot-scope="scope">
-          <el-tag type="success" v-if="!scope.row.delFlag">启用</el-tag>
-          <el-tag type="danger" v-if="scope.row.delFlag">停用</el-tag>
+          <el-tag v-if="!scope.row.delFlag" type="success">启用</el-tag>
+          <el-tag v-if="scope.row.delFlag" type="danger">停用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="created_at" label="操作" width="300">
+      <el-table-column align="center" label="操作" prop="created_at" width="300">
         <template slot-scope="scope">
-          <el-button size="small" type="danger" icon="el-icon-edit" v-if="!scope.row.isChoosed"
+          <el-button v-if="!scope.row.isChoosed" icon="el-icon-edit" size="small" type="danger"
                      @click="showTheEdit(scope.row.id)"
           >锁座
           </el-button>
-          <el-button size="small" type="primary" icon="el-icon-edit" v-if="scope.row.isChoosed"
+          <el-button v-if="scope.row.isChoosed" icon="el-icon-edit" size="small" type="primary"
                      @click="showTheEdit(scope.row.id)"
           >解座
           </el-button>
-          <el-button size="small" type="danger" icon="el-icon-delete" @click="disabledTheSeat(scope.row.id)"
-                     v-if="!scope.row.delFlag"
+          <el-button v-if="!scope.row.delFlag" icon="el-icon-delete" size="small" type="danger"
+                     @click="disabledTheSeat(scope.row.id)"
           >停用
           </el-button>
-          <el-button size="small" type="success" icon="el-icon-setting" @click="disabledTheSeat(scope.row.id)"
-                     v-if="scope.row.delFlag"
+          <el-button v-if="scope.row.delFlag" icon="el-icon-setting" size="small" type="success"
+                     @click="disabledTheSeat(scope.row.id)"
           >启用
           </el-button>
         </template>
@@ -115,7 +115,7 @@ export default {
   watch: {},
 
   methods: {
-    showTheEdit(row){
+    showTheEdit(row) {
       return new Promise((resolve, reject) => {
         lockSeat(row).then(() => {
           this.getSeatListByRoomId(this.selectValue)

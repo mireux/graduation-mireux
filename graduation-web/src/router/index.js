@@ -1,11 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
-Vue.use(Router)
-
 /* Layout */
 import Layout from '@/layout'
-import icon from 'element-ui/packages/icon'
+
+Vue.use(Router)
 
 /**
  * Note: sub-menu only appear when route children.length >= 1

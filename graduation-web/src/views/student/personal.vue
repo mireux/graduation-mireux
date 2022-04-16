@@ -8,17 +8,17 @@
             <img id="aaa" :src="avatar">
           </div>
           <el-dialog
-            title="上传头像"
             :visible.sync="dialogVisible"
             :width="dialogWidth"
+            title="上传头像"
           >
             <el-upload
-              class="avatar-uploader"
-              action="/upload"
-              :headers="headers"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
+              :headers="headers"
+              :on-success="handleAvatarSuccess"
+              :show-file-list="false"
+              action="/upload"
+              class="avatar-uploader"
             >
               <img v-if="imageUrl" :src="imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"/>
@@ -31,16 +31,39 @@
     </div>
     <el-divider></el-divider>
     <div v-if="!isChange" id="userInfo">
-      <vue-element-loading :active="isActive" spinner="bar-fade-scale" color="#FF6700" background-color="rgba(255, 255, 255,.99)"/>
+      <vue-element-loading :active="isActive" background-color="rgba(255, 255, 255,.99)" color="#FF6700"
+                           spinner="bar-fade-scale"
+      />
       <el-row>
         <el-col :span="18">
           <div><h3>个人信息</h3></div>
         </el-col>
         <el-col :span="6">
           <div style="position: relative;margin-top: 15px">
-            <el-button round @click="changeUser">修改</el-button>
+            <el-button round @click="changeUser">修改信息</el-button>
+            <el-button round @click="passwordVisable=true">修改密码</el-button>
           </div>
         </el-col>
+        <el-dialog
+         :visible.sync="passwordVisable"
+            title="修改密码"
+        >
+        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px">
+      <el-form-item label="旧密码" prop="oldPass">
+        <el-input type="password" v-model.number="ruleForm.oldPass" style="width: 400px"></el-input>
+      </el-form-item>
+      <el-form-item label="密码" prop="newPass">
+        <el-input type="password" v-model="ruleForm.newPass" autocomplete="off" style="width: 400px"></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码" prop="checkPass">
+        <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off" style="width: 400px"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('ruleForm')" style="margin-left: 100px">提交</el-button>
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+      </el-form-item>
+    </el-form>
+        </el-dialog>
         <el-col>
           <div style="margin-left: 20px; margin-top: 20px">
             <span style="">名字：</span>&nbsp;{{
@@ -121,9 +144,9 @@
         </el-form-item>
         <el-form-item label="所在地">
           <myDistrict
-            :province.sync="province"
-            :city.sync="city"
             :area.sync="area"
+            :city.sync="city"
+            :province.sync="province"
           />
         </el-form-item>
         <el-form-item>
@@ -137,16 +160,43 @@
 
 <script>
 import { getToken } from '@/utils/auth'
-import { getInfo, UpdateRoleInfo, UpdateLoad, CancelUpdateAvatar } from '@/api/user'
+import { CancelUpdateAvatar, getInfo, UpdateLoad, UpdateRoleInfo,changePassword } from '@/api/user'
 import { mapGetters } from 'vuex'
 import VueElementLoading from 'vue-element-loading'
+
 export default {
   name: 'personal',
   components: {
-    VueElementLoading
+    VueElementLoading,
   },
   data() {
+        const checkOldPass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('旧密码不能为空'))
+      }
+      callback()
+    }
+    const validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass')
+        }
+        callback()
+      }
+    }
+    const validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.ruleForm.newPass) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
+      passwordVisable: false,
       isActive: true,
       userInfoList: {
         nickName: '',
@@ -172,7 +222,24 @@ export default {
       },
       province: '',
       city: '',
-      area: ''
+      area: '',
+       ruleForm: {
+        oldPass: '',
+        newPass: '',
+        checkPass: ''
+      },
+      rules: {
+        oldPass: [
+          { validator: checkOldPass, trigger: 'blur' }
+        ],
+        newPass: [
+          { validator: validatePass, trigger: 'blur' },
+          {min: 6,max:15,message:"长度必须在6-15个字符之间",trigger: 'blur'}
+        ],
+        checkPass: [
+          { validator: validatePass2, trigger: 'blur' }
+        ]
+      }
     }
   },
 
@@ -192,6 +259,25 @@ export default {
   watch: {},
 
   methods: {
+ submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          return new Promise((resolve, reject) => {
+            changePassword(this.ruleForm).then(() => {
+              this.$router.go(0)
+            }).catch(error => {
+              reject(error)
+            })
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
     updateUserinfo() {
       if (this.province === '') {
         this.changeUserInfoList.address = null
@@ -203,15 +289,14 @@ export default {
         UpdateRoleInfo(this.changeUserInfoList)
           .then(resp => {
             resolve(resp)
-              this.isChange = false
-              this.isActive = true
-              this.getUserInfo()
+            this.isChange = false
+            this.isActive = true
+            this.getUserInfo()
 
-
-        })
-        .catch(error => {
-          reject(error)
-        })
+          })
+          .catch(error => {
+            reject(error)
+          })
       }))
     },
     cancel() {
@@ -260,7 +345,7 @@ export default {
       return new Promise(((resolve, reject) => {
         UpdateLoad().then((resp) => {
           const { data } = resp
-          this.$store.commit('user/SET_AVATAR',data)
+          this.$store.commit('user/SET_AVATAR', data)
           this.getUserInfo()
           this.imageUrl = ''
           this.dialogVisible = false
@@ -271,15 +356,15 @@ export default {
       }))
     },
     cancelDialog() {
-      return new Promise((resolve, reject) =>  {
+      return new Promise((resolve, reject) => {
         CancelUpdateAvatar()
-        .then((resp) => {
-          this.dialogVisible = false
-          resolve()
-        })
-        .catch(error => {
-          reject(error)
-        })
+          .then((resp) => {
+            this.dialogVisible = false
+            resolve()
+          })
+          .catch(error => {
+            reject(error)
+          })
       })
 
     },
@@ -291,7 +376,7 @@ export default {
             this.userInfoList = data
             setInterval(() => {
               this.isActive = false
-            },100)
+            }, 100)
             resolve(data)
           })
           .catch((error) => {
