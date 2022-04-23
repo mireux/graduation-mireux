@@ -1,6 +1,7 @@
 package com.example.graduationlhj.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.entity.Role;
 import com.example.graduationlhj.entity.User;
@@ -11,8 +12,8 @@ import com.example.graduationlhj.params.Vo.UserVo;
 import com.example.graduationlhj.params.param.LoginParam;
 import com.example.graduationlhj.params.param.PasswordParam;
 import com.example.graduationlhj.params.param.UserInfoParam;
+import com.example.graduationlhj.service.StudyreportService;
 import com.example.graduationlhj.service.UserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.graduationlhj.utils.JwtUtil;
 import com.example.graduationlhj.utils.QiniuUtils;
 import com.example.graduationlhj.utils.RedisCache;
@@ -24,10 +25,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -56,14 +54,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final UserMapper userMapper;
 
+    private final StudyreportService studyreportService;
+
     private final QiniuUtils qiniuUtils;
 
 
     @Autowired
-    public UserServiceImpl(AuthenticationManager authenticationManager, RedisCache redisCache, UserMapper userMapper, QiniuUtils qiniuUtils) {
+    public UserServiceImpl(AuthenticationManager authenticationManager, RedisCache redisCache, UserMapper userMapper, StudyreportService studyreportService, QiniuUtils qiniuUtils) {
         this.authenticationManager = authenticationManager;
         this.redisCache = redisCache;
         this.userMapper = userMapper;
+        this.studyreportService = studyreportService;
         this.qiniuUtils = qiniuUtils;
     }
 
@@ -247,6 +248,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return new Result(500, "添加失败");
         }
         // 添加个人学习报告
+        if (!studyreportService.createStudyReport(user.getId())) {
+            return new Result(500, "添加失败");
+        }
         return new Result(200, "添加成功");
     }
 

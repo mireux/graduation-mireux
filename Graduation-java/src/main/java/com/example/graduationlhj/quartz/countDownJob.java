@@ -2,12 +2,11 @@ package com.example.graduationlhj.quartz;
 
 import com.example.graduationlhj.service.BookorderService;
 import com.example.graduationlhj.service.SeatService;
+import com.example.graduationlhj.service.StudyreportService;
 import org.quartz.*;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Component
 public class countDownJob extends QuartzJobBean {
@@ -18,10 +17,13 @@ public class countDownJob extends QuartzJobBean {
 
     private final BookorderService bookorderService;
 
-    public countDownJob(Scheduler scheduler, SeatService seatService, BookorderService bookorderService) {
+    private final StudyreportService studyreportService;
+
+    public countDownJob(Scheduler scheduler, SeatService seatService, BookorderService bookorderService, StudyreportService studyreportService) {
         this.scheduler = scheduler;
         this.seatService = seatService;
         this.bookorderService = bookorderService;
+        this.studyreportService = studyreportService;
     }
 
 
@@ -45,8 +47,8 @@ public class countDownJob extends QuartzJobBean {
         seatService.releaseSeat(Long.valueOf(seatId));
         // 2， 改变订单状态为结束状态
         bookorderService.finishOrder(bookOrderId);
-        // 3. TODO 改变学习报告中的学习时长和预约次数
-        System.out.println("改变学习报告中的时长和次数成功");
+        // 3. 改变学习报告中的学习时长和预约次数
+        studyreportService.changeStudyReport(bookOrderId);
         try {
             // 暂停触发器的计时
             scheduler.pauseTrigger(trigger.getKey());

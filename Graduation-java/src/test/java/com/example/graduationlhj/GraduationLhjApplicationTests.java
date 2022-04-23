@@ -1,21 +1,19 @@
 package com.example.graduationlhj;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.graduationlhj.entity.Bookorder;
 import com.example.graduationlhj.entity.Room;
 import com.example.graduationlhj.entity.Seat;
 import com.example.graduationlhj.entity.User;
-import com.example.graduationlhj.mapper.MenuMapper;
-import com.example.graduationlhj.mapper.RoomMapper;
-import com.example.graduationlhj.mapper.SeatMapper;
-import com.example.graduationlhj.mapper.UserMapper;
-import com.example.graduationlhj.params.RoomInfo;
+import com.example.graduationlhj.mapper.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
 
 @SpringBootTest
 class GraduationLhjApplicationTests {
@@ -32,10 +30,13 @@ class GraduationLhjApplicationTests {
     @Autowired
     private SeatMapper seatMapper;
 
+    @Autowired
+    private BookorderMapper bookorderMapper;
+
     @Test
     public void TestUserMapper() {
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(User::getUserName,"lhj");
+        lambdaQueryWrapper.eq(User::getUserName, "lhj");
         User user = userMapper.selectOne(lambdaQueryWrapper);
         System.out.println(user);
     }
@@ -68,10 +69,23 @@ class GraduationLhjApplicationTests {
     public void TestSeatMapper() {
         Long roomId = 13L;
         LambdaQueryWrapper<Seat> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Seat::getRoomId,roomId).orderByDesc(Seat::getSeat).last("limit 1");
+        lambdaQueryWrapper.eq(Seat::getRoomId, roomId).orderByDesc(Seat::getSeat).last("limit 1");
         Seat seat = seatMapper.selectOne(lambdaQueryWrapper);
         System.out.println(seat.getSeat());
 //        System.out.println(integer);
     }
+
+    @Test
+    public void TestTimeDuration() {
+        LambdaQueryWrapper<Bookorder> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Bookorder::getId, 25L);
+        Bookorder bookorder = bookorderMapper.selectOne(lambdaQueryWrapper);
+        Long adminId = bookorder.getAdminId();// 用户id
+        LocalDateTime bookStartTime = bookorder.getBookStartTime(); // 开始时间
+        LocalDateTime bookEndTime = bookorder.getBookEndTime(); // 结束时间
+        Duration duration = Duration.between(bookStartTime, bookEndTime);
+        long min = duration.toMinutes();
+    }
+
 
 }

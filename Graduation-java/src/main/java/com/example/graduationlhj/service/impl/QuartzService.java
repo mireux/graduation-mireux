@@ -1,8 +1,11 @@
 package com.example.graduationlhj.service.impl;
 
 import com.example.graduationlhj.params.param.SeatBookParam;
+import com.example.graduationlhj.quartz.clearMonthlyJob;
+import com.example.graduationlhj.quartz.clearWeeklyJob;
 import com.example.graduationlhj.quartz.countDownJob;
 import org.quartz.*;
+import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +45,46 @@ public class QuartzService {
             System.out.println("定时器设置失败");
         }
     }
+
+    // 开启定时任务 每周一定时清理数据库中得周记录
+    @Bean
+    public void clearStudyReportWeekly() {
+        String cron = " 0 0 0 ? * MON";
+        JobDetail jobDetail = JobBuilder.newJob(clearWeeklyJob.class)
+                .build();
+        CronTrigger WeeklyTrigger = TriggerBuilder.newTrigger()
+                // 指定触发器组名和触发器名
+                .withIdentity("ClearWeekly",
+                        "ClearWeekly")
+                .withSchedule(CronScheduleBuilder.cronSchedule(cron))
+                .build();
+        try {
+            scheduler.scheduleJob(jobDetail, WeeklyTrigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+            System.out.println("定时器设置失败");
+        }
+    }
+
+    // 开启定时任务 每月定时清理数据库中得月学习记录
+    @Bean
+    public void clearStudyReportMonthly() {
+        String cron = " 59 59 23 L * ?";
+        JobDetail jobDetail = JobBuilder.newJob(clearMonthlyJob.class)
+                .build();
+        CronTrigger MonthlyTrigger = TriggerBuilder.newTrigger()
+                // 指定触发器组名和触发器名
+                .withIdentity("ClearMonthly",
+                        "ClearMonthly")
+                .withSchedule(CronScheduleBuilder.cronSchedule(cron))
+                .build();
+        try {
+            scheduler.scheduleJob(jobDetail, MonthlyTrigger);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+            System.out.println("定时器设置失败");
+        }
+    }
+
 
 }
