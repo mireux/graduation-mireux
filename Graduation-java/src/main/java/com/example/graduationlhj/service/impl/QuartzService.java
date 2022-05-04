@@ -16,28 +16,25 @@ public class QuartzService {
 
     private final Scheduler scheduler;
 
+    private static final String SCHEDULER_NAME = "Quartz";
+
+    private static final String GROUP_NAME = "EndTime";
+
     public QuartzService(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
 
     // 开启定时任务 当用户预约结束后 将座位得状态修改为未选 将用户的预定改为结束
     @Async
-    public void SeatCountDown(SeatBookParam seatBookParam, Long userId,Long bookOrderId) {
+    public void SeatCountDown(SeatBookParam seatBookParam, Long userId, Long bookOrderId) {
         LocalDateTime endTime = seatBookParam.getEndTime();
         Long seatId = seatBookParam.getSeatId();
-        JobDetail jobDetail = JobBuilder.newJob(countDownJob.class)
-                .usingJobData("seatId", seatId.toString())
-                .usingJobData("userId", userId.toString())
-                .usingJobData("bookOrderId",bookOrderId.toString())
-                .build();
+        JobDetail jobDetail = JobBuilder.newJob(countDownJob.class).usingJobData("seatId", seatId.toString()).usingJobData("userId", userId.toString()).usingJobData("bookOrderId", bookOrderId.toString()).build();
         // 创建触发器
         String endCron = String.format("%d %d %d %d %d ? %d", endTime.getSecond(), endTime.getMinute(), endTime.getHour(), endTime.getDayOfMonth(), endTime.getMonth().getValue(), endTime.getYear());
         CronTrigger endCronTrigger = TriggerBuilder.newTrigger()
                 // 指定触发器组名和触发器名
-                .withIdentity(endTime.toString(),
-                        userId + "_end")
-                .withSchedule(CronScheduleBuilder.cronSchedule(endCron))
-                .build();
+                .withIdentity(SCHEDULER_NAME + userId, GROUP_NAME + userId).withSchedule(CronScheduleBuilder.cronSchedule(endCron)).build();
         try {
             scheduler.scheduleJob(jobDetail, endCronTrigger);
         } catch (SchedulerException e) {
@@ -46,18 +43,23 @@ public class QuartzService {
         }
     }
 
+    // 删除对应的定时任务
+    public void deleteQuartzJob(String userId) throws SchedulerException {
+        JobKey jobKey = new JobKey(SCHEDULER_NAME + userId, GROUP_NAME + userId);
+        TriggerKey triggerKey = TriggerKey.triggerKey(SCHEDULER_NAME + userId, GROUP_NAME + userId);
+        scheduler.pauseTrigger(triggerKey);
+        scheduler.unscheduleJob(triggerKey);
+        scheduler.deleteJob(jobKey);
+    }
+
     // 开启定时任务 每周一定时清理数据库中得周记录
     @Bean
     public void clearStudyReportWeekly() {
         String cron = " 0 0 0 ? * MON";
-        JobDetail jobDetail = JobBuilder.newJob(clearWeeklyJob.class)
-                .build();
+        JobDetail jobDetail = JobBuilder.newJob(clearWeeklyJob.class).build();
         CronTrigger WeeklyTrigger = TriggerBuilder.newTrigger()
                 // 指定触发器组名和触发器名
-                .withIdentity("ClearWeekly",
-                        "ClearWeekly")
-                .withSchedule(CronScheduleBuilder.cronSchedule(cron))
-                .build();
+                .withIdentity("ClearWeekly", "ClearWeekly").withSchedule(CronScheduleBuilder.cronSchedule(cron)).build();
         try {
             scheduler.scheduleJob(jobDetail, WeeklyTrigger);
         } catch (SchedulerException e) {
@@ -70,14 +72,10 @@ public class QuartzService {
     @Bean
     public void clearStudyReportMonthly() {
         String cron = " 59 59 23 L * ?";
-        JobDetail jobDetail = JobBuilder.newJob(clearMonthlyJob.class)
-                .build();
+        JobDetail jobDetail = JobBuilder.newJob(clearMonthlyJob.class).build();
         CronTrigger MonthlyTrigger = TriggerBuilder.newTrigger()
                 // 指定触发器组名和触发器名
-                .withIdentity("ClearMonthly",
-                        "ClearMonthly")
-                .withSchedule(CronScheduleBuilder.cronSchedule(cron))
-                .build();
+                .withIdentity("ClearMonthly", "ClearMonthly").withSchedule(CronScheduleBuilder.cronSchedule(cron)).build();
         try {
             scheduler.scheduleJob(jobDetail, MonthlyTrigger);
         } catch (SchedulerException e) {

@@ -1,6 +1,7 @@
 package com.example.graduationlhj.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.entity.Bookorder;
 import com.example.graduationlhj.entity.User;
@@ -10,9 +11,8 @@ import com.example.graduationlhj.mapper.SeatMapper;
 import com.example.graduationlhj.params.param.BookOrderParam;
 import com.example.graduationlhj.params.param.SeatBookParam;
 import com.example.graduationlhj.service.BookorderService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.graduationlhj.service.SeatService;
 import com.example.graduationlhj.utils.UserUtils;
+import org.quartz.SchedulerException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -115,6 +115,7 @@ public class BookorderServiceImpl extends ServiceImpl<BookorderMapper, Bookorder
 
     /**
      * 取消订单
+     *
      * @return
      */
     @Override
@@ -123,12 +124,18 @@ public class BookorderServiceImpl extends ServiceImpl<BookorderMapper, Bookorder
         // 2. 修改对应的座位状态为未选状态
         Long id = Long.valueOf(bookOrderId);
         LambdaQueryWrapper<Bookorder> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Bookorder::getId,id);
+        lambdaQueryWrapper.eq(Bookorder::getId, id);
         Bookorder bookorder = bookorderMapper.selectOne(lambdaQueryWrapper);
         bookorder.setIsFinished(3);
         bookorderMapper.updateById(bookorder);
         seatMapper.releaseSeat(bookorder.getSeatId());
-        return new Result(200,"取消预定成功");
+        // 取消定时任务
+        try {
+            quartzService.deleteQuartzJob(bookorder.getAdminId().toString());
+        } catch (SchedulerException e) {
+            return new Result(300, "取消预定失败");
+        }
+        return new Result(200, "取消预定成功");
     }
 
     /**

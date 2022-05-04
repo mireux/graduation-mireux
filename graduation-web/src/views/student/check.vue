@@ -1,5 +1,9 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
   <div>
+    您的总共学习时间为：{{studyReportList.totalStudyTime}} 分钟
+    <br/> 您的上月学习时间为：{{studyReportList.lastMonthStudyTime}} 分钟
+    <br/>您的总共预约次数为：{{studyReportList.bookTotalTimes}} 次
+    <br/>您上周得预约次数为：{{studyReportList.bookWeekTimes}} 次
     <el-table
       v-loading="listLoading"
       :data="bookOrderList"
@@ -62,6 +66,7 @@
 
 <script>
 import { cancelOrder, getOrderByUser } from '@/api/order'
+import { getStudyReport } from '@/api/showInfo'
 
 export default {
   name: 'check',
@@ -69,15 +74,10 @@ export default {
     return {
       bookOrderList: [],
       loading: false,
-      listLoading: true
+      listLoading: true,
+      studyReportList: []
     }
   },
-
-  //监听属性 类似于data概念",
-  computed: {},
-
-  //监控data中的数据变化",
-  watch: {},
 
   methods: {
     showTheEdit(row) {
@@ -96,7 +96,6 @@ export default {
       return new Promise((resolve, reject) => {
         getOrderByUser().then((resp) => {
           const { data } = resp
-          console.log(data)
           this.bookOrderList = data
           this.listLoading = false
           resolve(resp)
@@ -104,12 +103,24 @@ export default {
           reject(error)
         })
       })
+    },
+    getStudyReport() {
+      return new Promise(((resolve, reject) => {
+        getStudyReport().then(resp => {
+          const { data } = resp
+          this.studyReportList = data
+          resolve(resp)
+        }).catch(error => {
+          reject(error)
+        })
+      }))
     }
   },
 
   //生命周期 - 创建完成（可以访问当前this实例）",数据模型已加载，方法已加载,html模板已加载,html模板未渲染
   created() {
     this.getAllOrder()
+    this.getStudyReport()
   },
 
   //生命周期 - 挂载完成（可以访问DOM元素）",html模板已渲染

@@ -13,3 +13,10 @@ export function getRoom() {
     method: 'get'
   })
 }
+
+export function getStudyReport() {
+  return request({
+    url: '/studyreport/get',
+    method: 'get'
+  })
+}
