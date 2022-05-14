@@ -209,7 +209,10 @@ public class SeatServiceImpl extends ServiceImpl<SeatMapper, Seat> implements Se
             Long id = seat.getId();
             Long roomId = seat.getRoomId();
             Long bookOrderId = bookorderService.searchOrder(roomId, id);
-            bookorderService.finishOrder(bookOrderId.toString());
+            if(bookOrderId != null) {
+                // 存在订单需要解锁
+                bookorderService.finishOrder(bookOrderId.toString());
+            }
         }
         seat.setIsChoosed(!seat.getIsChoosed());
         // 更新更新人和更新时间
