@@ -6,6 +6,7 @@ import com.example.graduationlhj.utils.JwtUtil;
 import com.example.graduationlhj.utils.QiniuUtils;
 import com.example.graduationlhj.utils.RedisCache;
 import io.jsonwebtoken.Claims;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("upload")
+@Api("上传接口")
 public class UpLoadController {
 
     private final QiniuUtils qiniuUtils;

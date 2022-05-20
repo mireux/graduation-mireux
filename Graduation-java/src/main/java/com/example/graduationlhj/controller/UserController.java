@@ -8,7 +8,9 @@ import com.example.graduationlhj.params.param.LoginParam;
 import com.example.graduationlhj.params.param.PasswordParam;
 import com.example.graduationlhj.params.param.UserInfoParam;
 import com.example.graduationlhj.service.UserService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/user")
+@Api("用户相关接口")
 public class UserController {
 
     private final UserService userService;

@@ -4,6 +4,8 @@ package com.example.graduationlhj.controller;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.params.param.BookOrderParam;
 import com.example.graduationlhj.service.BookorderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/order")
+@Api("预定订单接口")
 public class BookorderController {
 
     private final BookorderService bookorderService;
@@ -25,11 +28,13 @@ public class BookorderController {
     }
 
     @GetMapping("/getAll")
+    @ApiOperation("获取全部订单")
     public Result getAllOrder() {
         return bookorderService.getAllOrder();
     }
 
     @PostMapping("/cancel")
+    @ApiOperation("取消订单")
     public Result cancelOrder(String bookOrderId) {
         return bookorderService.cancelOrder(bookOrderId);
     }

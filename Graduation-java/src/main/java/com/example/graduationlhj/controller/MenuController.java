@@ -21,7 +21,6 @@ public class MenuController {
 
     @GetMapping("/test/list")
     @PreAuthorize("hasAuthority('stu:seat:findAll')")
-    @ApiOperation("测试list")
     public String TestAuth1() {
         return "TestAuth1 Success";
     }
@@ -29,7 +28,6 @@ public class MenuController {
 
     @GetMapping("/test/update")
     @PreAuthorize("hasAuthority('admin:seat:update')")
-    @ApiOperation("测试update")
     public String TestAuth2() {
         return "TestAuth2 Success";
     }
@@ -37,7 +35,6 @@ public class MenuController {
 
     @GetMapping("/test/delete")
     @PreAuthorize("hasAuthority('admin:seat:delete')")
-    @ApiOperation("测试delete")
     public String TestAuth3() {
         return "TestAuth3 Success";
     }

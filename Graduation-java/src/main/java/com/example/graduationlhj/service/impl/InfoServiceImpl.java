@@ -60,9 +60,9 @@ public class InfoServiceImpl implements InfoService {
 
         List<Room> rooms = roomMapper.selectList(lambdaQueryWrapper.orderByDesc(Room::getRoom));
         List<String> collect = rooms.stream().map(Room::getRoom).collect(Collectors.toList());
-        HashMap<String, List<String>> hashMap = new HashMap<>();
-        hashMap.put("room",collect);
-        System.out.println("hashMap = " + hashMap);
-        return new Result(200,"",hashMap);
+//        HashMap<String, List<String>> hashMap = new HashMap<>();
+//        hashMap.put("room",collect);
+//        System.out.println("hashMap = " + hashMap);
+        return new Result(200,"",collect);
     }
 }

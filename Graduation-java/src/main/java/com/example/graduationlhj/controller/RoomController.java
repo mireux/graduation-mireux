@@ -4,6 +4,7 @@ package com.example.graduationlhj.controller;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.params.param.RoomInsertParam;
 import com.example.graduationlhj.service.RoomService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/room")
+@Api("管理自习室接口")
 public class RoomController {
     private final RoomService roomService;
 
