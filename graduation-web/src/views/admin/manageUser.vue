@@ -75,10 +75,10 @@
     <el-dialog :visible.sync="dialogFormVisible" title="添加用户">
       <el-form :model="newUserList">
         <el-form-item :label-width="formLabelWidth" label="账号">
-          <el-input v-model="newUserList.userName" autocomplete="off"></el-input>
+          <el-input v-model="newUserList.userName" autocomplete="off" style="width: 200px"></el-input>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="昵称">
-          <el-input v-model="newUserList.nickName" autocomplete="off"></el-input>
+          <el-input v-model="newUserList.nickName" autocomplete="off" style="width: 200px"></el-input>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="密码">
           <el-input v-model="newUserList.password" :disabled="true" autocomplete="off" style="width: 200px"></el-input>

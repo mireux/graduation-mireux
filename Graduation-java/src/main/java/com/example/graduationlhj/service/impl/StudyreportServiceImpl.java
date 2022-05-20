@@ -8,9 +8,11 @@ import com.example.graduationlhj.entity.Studyreport;
 import com.example.graduationlhj.entity.User;
 import com.example.graduationlhj.mapper.BookorderMapper;
 import com.example.graduationlhj.mapper.StudyreportMapper;
+import com.example.graduationlhj.params.Vo.StudyReportVo;
 import com.example.graduationlhj.service.StudyreportService;
 import com.example.graduationlhj.utils.UserUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,9 +95,18 @@ public class StudyreportServiceImpl extends ServiceImpl<StudyreportMapper, Study
     public Result getStudyReportById() {
         User userInfo = UserUtils.getUserInfo();
         LambdaQueryWrapper<Studyreport> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        Integer totalNumber = studyreportMapper.selectCount(null);
         lambdaQueryWrapper.eq(Studyreport::getAdminId, userInfo.getId());
         Studyreport studyreport = studyreportMapper.selectOne(lambdaQueryWrapper);
-        System.out.println("studyreport = " + studyreport);
-        return new Result(200, "", studyreport);
+        StudyReportVo studyReportVo = new StudyReportVo();
+        BeanUtils.copyProperties(studyreport, studyReportVo);
+        // 获取所有小于个人的预约的人数
+        lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.lt(Studyreport::getBookTotalTimes, studyreport.getBookTotalTimes());
+        studyReportVo.setTotalTimesRating(studyreportMapper.selectCount(lambdaQueryWrapper) / Double.valueOf(totalNumber));
+        lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.lt(Studyreport::getBookWeekTimes, studyreport.getBookWeekTimes());
+        studyReportVo.setWeekTimesRating(studyreportMapper.selectCount(lambdaQueryWrapper) / Double.valueOf(totalNumber));
+        return new Result(200, "", studyReportVo);
     }
 }

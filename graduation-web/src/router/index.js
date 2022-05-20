@@ -88,25 +88,25 @@ export const asyncRoutes = [
     ]
   },
   // 学习报告 权限：student
-  // {
-  //   path: '/student/2',
-  //   component: Layout,
-  //   redirect: '/student/studyReport',
-  //   meta: {
-  //     roles: ['Student']
-  //   },
-  //   children: [
-  //     {
-  //       path: '/student/studyReport',
-  //       component: () => import('@/views/student/studyReport'),
-  //       name: 'studyReport',
-  //       meta: {
-  //         title: '学习报告',
-  //         icon: 'dashboard'
-  //       }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/student/2',
+    component: Layout,
+    redirect: '/student/studyReport',
+    meta: {
+      roles: ['Student']
+    },
+    children: [
+      {
+        path: '/student/studyReport',
+        component: () => import('@/views/student/studyReport'),
+        name: 'studyReport',
+        meta: {
+          title: '学习报告',
+          icon: 'dashboard'
+        }
+      }
+    ]
+  },
   // 注意事项 路由：/student/warning 权限：student
   {
     path: '/student/3',

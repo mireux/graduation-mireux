@@ -232,7 +232,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 获取当前管理员信息
         User userInfo = UserUtils.getUserInfo();
         // 头像默认
-        user.setAvatar("https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+        user.setAvatar("http://badwomen.asia/6dd34e05-0e07-49dc-bd14-51dd1f1a0886.gif");
         user.setCreateBy(userInfo.getId());
         user.setUpdateBy(userInfo.getId());
         user.setCreateTime(LocalDateTime.now());

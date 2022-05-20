@@ -11,10 +11,9 @@ import * as echarts from 'echarts'
 import { getInfo, getRoom } from '@/api/showInfo'
 
 export default {
-  name: 'Monthly',
+  name: 'showInfo',
   data() {
     return {
-      goodsName: '',
       dataList: {chosenSeat:[],totalSeat:[]},
       chosenSeat: [],
       totalSeat: [],
