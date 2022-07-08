@@ -1,10 +1,15 @@
 package com.example.graduationlhj.controller;
 
 
+import com.example.graduationlhj.params.LoginUser;
+import com.example.graduationlhj.utils.JwtUtil;
 import com.example.graduationlhj.utils.RedisCache;
 import com.google.code.kaptcha.Producer;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.*;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,16 +24,20 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@Slf4j
 public class KaptchaController {
 
     private final Producer captchaProducer;
 
     private final RedisCache redisCache;
 
+    private final AuthenticationManager authenticationManager;
+
     @Autowired
-    public KaptchaController(Producer captchaProducer, RedisCache redisCache) {
+    public KaptchaController(Producer captchaProducer, RedisCache redisCache, AuthenticationManager authenticationManager) {
         this.captchaProducer = captchaProducer;
         this.redisCache = redisCache;
+        this.authenticationManager = authenticationManager;
     }
 
     @GetMapping("/captcha")
@@ -61,4 +70,26 @@ public class KaptchaController {
         }
         return null;
     }
+
+    @GetMapping("/user/jwt")
+    public String getJwtByTest() {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("student", "123456");
+        Authentication authenticate = null;
+        try {
+            authenticate = authenticationManager.authenticate(authenticationToken);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        assert authenticate != null;
+        LoginUser loginUser = (LoginUser) authenticate.getPrincipal();
+        // 获取用户ID去生成一个token
+        String userId = loginUser.getUser().getId().toString();
+        // 生成token
+        String token = JwtUtil.createJWT(userId);
+        //将数据存入redis 根据Id查找和放入
+        redisCache.setCacheObject("login:" + userId, loginUser, 1, TimeUnit.DAYS);
+        log.info("token: {}",token);
+        return token;
+    }
+
 }

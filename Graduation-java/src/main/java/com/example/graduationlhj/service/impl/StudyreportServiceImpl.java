@@ -102,10 +102,10 @@ public class StudyreportServiceImpl extends ServiceImpl<StudyreportMapper, Study
         BeanUtils.copyProperties(studyreport, studyReportVo);
         // 获取所有小于个人的预约的人数
         lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.lt(Studyreport::getBookTotalTimes, studyreport.getBookTotalTimes());
+        lambdaQueryWrapper.le(Studyreport::getBookTotalTimes, studyreport.getBookTotalTimes());
         studyReportVo.setTotalTimesRating(studyreportMapper.selectCount(lambdaQueryWrapper) / Double.valueOf(totalNumber));
         lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.lt(Studyreport::getBookWeekTimes, studyreport.getBookWeekTimes());
+        lambdaQueryWrapper.le(Studyreport::getBookWeekTimes, studyreport.getBookWeekTimes());
         studyReportVo.setWeekTimesRating(studyreportMapper.selectCount(lambdaQueryWrapper) / Double.valueOf(totalNumber));
         return new Result(200, "", studyReportVo);
     }

@@ -44,25 +44,25 @@ public class LogAspect {
         Method method = signature.getMethod();
         LogAnnotation logAnnotation = method.getAnnotation(LogAnnotation.class);
         log.info("=====================log start================================");
-        log.info("module:{}", logAnnotation.module());
-        log.info("operation:{}", logAnnotation.operator());
+        log.info("module: {}", logAnnotation.module());
+        log.info("operation: {}", logAnnotation.operator());
 
         //请求的方法名
         String className = pjp.getTarget().getClass().getName();
         String methodName = signature.getName();
-        log.info("request method:{}", className + "." + methodName + "()");
+        log.info("request method: {}", className + "." + methodName + "()");
 
 //        //请求的参数
         Object[] args = pjp.getArgs();
         if (args.length != 0) {
             String params = JSON.toJSONString(args[0]);
-            log.info("params:{}", params);
+            log.info("params: {}", params);
         } else {
-            log.info("params:");
+            log.info("params: ");
         }
 
 
-        log.info("execute time : {} ms", time);
+        log.info("execute time: {} ms", time);
         log.info("=====================log end================================");
     }
 }

@@ -13,6 +13,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  application:
+    name: graduation_lhj
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/*Mapper.xml
@@ -24,6 +26,7 @@ mybatis-plus:
     db-config:
       id-type: auto
 
-
+logstash:
+  address: 0.0.0.0:5044
 #ESHost: 127.0.0.1:9200
 #debug: false
