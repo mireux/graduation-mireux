@@ -2,6 +2,7 @@ package com.example.graduationlhj.mapper;
 
 import com.example.graduationlhj.entity.Bookorder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lhj
  * @since 2022-01-12
  */
+@Mapper
 public interface BookorderMapper extends BaseMapper<Bookorder> {
 
     /**

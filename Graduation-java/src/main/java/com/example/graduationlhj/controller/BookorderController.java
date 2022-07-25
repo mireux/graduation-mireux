@@ -1,6 +1,7 @@
 package com.example.graduationlhj.controller;
 
 
+import com.example.graduationlhj.common.aop.LogAnnotation;
 import com.example.graduationlhj.common.lang.Result;
 import com.example.graduationlhj.service.BookorderService;
 import io.swagger.annotations.Api;
@@ -31,6 +32,7 @@ public class BookorderController {
 
     @GetMapping("/getAll")
     @ApiOperation("获取全部订单")
+    @LogAnnotation
     public Result getAllOrder() {
         return bookorderService.getAllOrder();
     }
