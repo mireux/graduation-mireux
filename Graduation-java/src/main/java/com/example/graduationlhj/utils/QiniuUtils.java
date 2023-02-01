@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Component
+@Deprecated
 public class QiniuUtils {
     public static final String url = "http://badwomen.asia/";
 
